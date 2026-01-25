@@ -243,5 +243,4 @@ paths:
       - Categories
 schemes:
 - http
-- https
 swagger: "2.0"

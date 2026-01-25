@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"kasir-api/configs"
+	"kasir-api/docs"
 	"kasir-api/models"
 	"kasir-api/routers"
 
@@ -49,6 +51,14 @@ func main() {
 
 	// Setup routes
 	routers.SetupRoutes(router)
+
+	// programmatically set swagger info
+	docs.SwaggerInfo.Title = "Kasir API"
+	docs.SwaggerInfo.Description = "A complete Point of Sale (POS) API built with Go, Gin, and GORM"
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = os.Getenv("SWAGGER_HOST")
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Schemes = []string{"https", "http"}
 
 	// Start server
 	log.Printf("Starting Kasir API v%s on port %s...", cfg.API.Version, cfg.Server.Port)

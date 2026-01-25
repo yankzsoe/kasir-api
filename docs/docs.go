@@ -373,7 +373,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
-	Schemes:          []string{"http", "https"},
+	Schemes:          []string{"http"},
 	Title:            "Kasir API",
 	Description:      "A complete Point of Sale (POS) API built with Go, Gin, and GORM",
 	InfoInstanceName: "swagger",
