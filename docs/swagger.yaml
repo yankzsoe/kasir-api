@@ -1,0 +1,246 @@
+basePath: /api/v1
+definitions:
+  dtos.CategoryCreateRequest:
+    properties:
+      description:
+        example: Electronic items
+        type: string
+      is_active:
+        example: true
+        type: boolean
+      name:
+        example: Electronics
+        type: string
+    type: object
+  dtos.CategoryResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        example: Electronic items
+        type: string
+      id:
+        example: 1
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      name:
+        example: Electronics
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dtos.CategoryUpdateRequest:
+    properties:
+      description:
+        example: Electronic items
+        type: string
+      is_active:
+        example: true
+        type: boolean
+      name:
+        example: Electronics
+        type: string
+    type: object
+  dtos.CreateCategorySuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.CategoryResponse'
+      message:
+        example: Category created successfully
+        type: string
+    type: object
+  dtos.DeleteCategorySuccessResponse:
+    properties:
+      message:
+        example: Category deleted successfully
+        type: string
+    type: object
+  dtos.ErrorResponse:
+    properties:
+      error:
+        example: error message
+        type: string
+    type: object
+  dtos.GetCategoriesSuccessResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.CategoryResponse'
+        type: array
+      message:
+        example: Categories retrieved successfully
+        type: string
+      total:
+        example: 1
+        type: integer
+    type: object
+  dtos.GetCategorySuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.CategoryResponse'
+      message:
+        example: Category retrieved successfully
+        type: string
+    type: object
+  dtos.UpdateCategorySuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.CategoryResponse'
+      message:
+        example: Category updated successfully
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+    url: http://www.kasir-api.com/support
+  description: A complete Point of Sale (POS) API built with Go, Gin, and GORM
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Kasir API
+  version: "1.0"
+paths:
+  /categories:
+    get:
+      description: Retrieve a list of all categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.GetCategoriesSuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Get all categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new category with the provided details
+      parameters:
+      - description: Category data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CategoryCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.CreateCategorySuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Create a new category
+      tags:
+      - Categories
+  /categories/{id}:
+    delete:
+      description: Delete a category by ID (soft delete)
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.DeleteCategorySuccessResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Delete a category
+      tags:
+      - Categories
+    get:
+      description: Retrieve a specific category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.GetCategorySuccessResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Get a category by ID
+      tags:
+      - Categories
+    put:
+      consumes:
+      - application/json
+      description: Update an existing category by ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Category data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CategoryUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.UpdateCategorySuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Update a category
+      tags:
+      - Categories
+schemes:
+- http
+swagger: "2.0"
