@@ -42,7 +42,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     }
                 }
@@ -80,13 +80,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     }
                 }
@@ -121,13 +121,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     }
                 }
@@ -172,19 +172,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     }
                 }
@@ -217,13 +217,220 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.ErrorResponse"
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/products": {
+            "get": {
+                "description": "Retrieve a list of all products",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get all products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.GetProductsSuccessResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new product with the provided details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create a new product",
+                "parameters": [
+                    {
+                        "description": "Product data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProductCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CreateProductSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "description": "Retrieve a specific product by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get a product by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.GetProductSuccessResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an existing product by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Update a product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Product data to update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProductUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateProductSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a product by ID (soft delete)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Delete a product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.DeleteProductSuccessResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
                         }
                     }
                 }
@@ -233,6 +440,9 @@ const docTemplate = `{
     "definitions": {
         "dtos.CategoryCreateRequest": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "description": {
                     "type": "string",
@@ -304,6 +514,18 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.CreateProductSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dtos.ProductResponse"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Product created successfully"
+                }
+            }
+        },
         "dtos.DeleteCategorySuccessResponse": {
             "type": "object",
             "properties": {
@@ -313,12 +535,12 @@ const docTemplate = `{
                 }
             }
         },
-        "dtos.ErrorResponse": {
+        "dtos.DeleteProductSuccessResponse": {
             "type": "object",
             "properties": {
-                "error": {
+                "message": {
                     "type": "string",
-                    "example": "error message"
+                    "example": "Product deleted successfully"
                 }
             }
         },
@@ -353,6 +575,127 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.GetProductSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dtos.ProductResponse"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Product retrieved successfully"
+                }
+            }
+        },
+        "dtos.GetProductsSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dtos.ProductResponse"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Products retrieved successfully"
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dtos.ProductCreateRequest": {
+            "type": "object",
+            "required": [
+                "harga",
+                "nama",
+                "stok"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "harga": {
+                    "type": "integer",
+                    "example": 10000000
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "nama": {
+                    "type": "string",
+                    "example": "Laptop"
+                },
+                "stok": {
+                    "type": "integer",
+                    "example": 5
+                }
+            }
+        },
+        "dtos.ProductResponse": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "harga": {
+                    "type": "integer",
+                    "example": 10000000
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "nama": {
+                    "type": "string",
+                    "example": "Laptop"
+                },
+                "stok": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.ProductUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "harga": {
+                    "type": "integer",
+                    "example": 10000000
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "nama": {
+                    "type": "string",
+                    "example": "Laptop"
+                },
+                "stok": {
+                    "type": "integer",
+                    "example": 5
+                }
+            }
+        },
         "dtos.UpdateCategorySuccessResponse": {
             "type": "object",
             "properties": {
@@ -362,6 +705,27 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "Category updated successfully"
+                }
+            }
+        },
+        "dtos.UpdateProductSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dtos.ProductResponse"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Product updated successfully"
+                }
+            }
+        },
+        "kasir-api_dtos.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error message"
                 }
             }
         }

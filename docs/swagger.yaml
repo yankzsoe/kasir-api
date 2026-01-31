@@ -11,6 +11,8 @@ definitions:
       name:
         example: Electronics
         type: string
+    required:
+    - name
     type: object
   dtos.CategoryResponse:
     properties:
@@ -51,16 +53,24 @@ definitions:
         example: Category created successfully
         type: string
     type: object
+  dtos.CreateProductSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ProductResponse'
+      message:
+        example: Product created successfully
+        type: string
+    type: object
   dtos.DeleteCategorySuccessResponse:
     properties:
       message:
         example: Category deleted successfully
         type: string
     type: object
-  dtos.ErrorResponse:
+  dtos.DeleteProductSuccessResponse:
     properties:
-      error:
-        example: error message
+      message:
+        example: Product deleted successfully
         type: string
     type: object
   dtos.GetCategoriesSuccessResponse:
@@ -84,12 +94,112 @@ definitions:
         example: Category retrieved successfully
         type: string
     type: object
+  dtos.GetProductSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ProductResponse'
+      message:
+        example: Product retrieved successfully
+        type: string
+    type: object
+  dtos.GetProductsSuccessResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.ProductResponse'
+        type: array
+      message:
+        example: Products retrieved successfully
+        type: string
+      total:
+        example: 1
+        type: integer
+    type: object
+  dtos.ProductCreateRequest:
+    properties:
+      category_id:
+        example: 1
+        type: integer
+      harga:
+        example: 10000000
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      nama:
+        example: Laptop
+        type: string
+      stok:
+        example: 5
+        type: integer
+    required:
+    - harga
+    - nama
+    - stok
+    type: object
+  dtos.ProductResponse:
+    properties:
+      category_id:
+        example: 1
+        type: integer
+      created_at:
+        type: string
+      harga:
+        example: 10000000
+        type: integer
+      id:
+        example: 1
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      nama:
+        example: Laptop
+        type: string
+      stok:
+        example: 5
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  dtos.ProductUpdateRequest:
+    properties:
+      category_id:
+        example: 1
+        type: integer
+      harga:
+        example: 10000000
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      nama:
+        example: Laptop
+        type: string
+      stok:
+        example: 5
+        type: integer
+    type: object
   dtos.UpdateCategorySuccessResponse:
     properties:
       data:
         $ref: '#/definitions/dtos.CategoryResponse'
       message:
         example: Category updated successfully
+        type: string
+    type: object
+  dtos.UpdateProductSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ProductResponse'
+      message:
+        example: Product updated successfully
+        type: string
+    type: object
+  kasir-api_dtos.ErrorResponse:
+    properties:
+      error:
+        example: error message
         type: string
     type: object
 host: localhost:8080
@@ -117,7 +227,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
       summary: Get all categories
       tags:
       - Categories
@@ -142,11 +252,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
       summary: Create a new category
       tags:
       - Categories
@@ -169,11 +279,11 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
       summary: Delete a category
       tags:
       - Categories
@@ -195,11 +305,11 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
       summary: Get a category by ID
       tags:
       - Categories
@@ -229,18 +339,155 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.ErrorResponse'
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
       summary: Update a category
       tags:
       - Categories
+  /products:
+    get:
+      description: Retrieve a list of all products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.GetProductsSuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+      summary: Get all products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product with the provided details
+      parameters:
+      - description: Product data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ProductCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.CreateProductSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+      summary: Create a new product
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      description: Delete a product by ID (soft delete)
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.DeleteProductSuccessResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+      summary: Delete a product
+      tags:
+      - Products
+    get:
+      description: Retrieve a specific product by its ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.GetProductSuccessResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+      summary: Get a product by ID
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Update an existing product by ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ProductUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.UpdateProductSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+      summary: Update a product
+      tags:
+      - Products
 schemes:
 - http
 swagger: "2.0"

@@ -50,14 +50,20 @@ func main() {
 		log.Fatalf("Failed to migrate models: %v", err)
 	}
 
+	if err := db.AutoMigrate(&models.Produk{}); err != nil {
+		log.Fatalf("Failed to migrate models: %v", err)
+	}
+
 	// Initialize repositories
 	repo := repositories.NewRepository(db)
 
 	// Initialize services
 	categoryService := services.NewCategoryService(repo.Category)
+	productService := services.NewProductService(repo.Product)
 
 	// Set up controllers with services
 	controllers.SetCategoryService(categoryService)
+	controllers.SetProductService(productService)
 
 	// Create Gin router
 	router := gin.Default()

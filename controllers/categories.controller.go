@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strings"
 
 	"kasir-api/common"
 	"kasir-api/dtos"
@@ -47,6 +48,9 @@ func CreateCategory(c *gin.Context) {
 
 	// Call service to create category
 	if err := categoryService.CreateCategory(&category); err != nil {
+		if strings.Contains(err.Error(), "duplicate key") {
+			common.ThrowException(400, "bad request (the name can't duplicate)")
+		}
 		common.ThrowException(http.StatusInternalServerError, err.Error())
 	}
 
