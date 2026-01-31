@@ -27,6 +27,9 @@ import (
 // @license.name MIT
 // @license.url https://opensource.org/licenses/MIT
 func main() {
+	// Setup GIN in release mode
+	gin.SetMode(gin.ReleaseMode)
+
 	// Load environment variables from .env file
 	if err := godotenv.Load(); err != nil {
 		log.Println("Warning: .env file not found, using system environment variables")
@@ -39,9 +42,7 @@ func main() {
 	gin.SetMode(cfg.Server.Mode)
 
 	// Initialize database
-	if err := configs.InitDB(cfg.Database.Path); err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
-	}
+	configs.InitDB()
 
 	// Auto migrate models
 	db := configs.GetDB()

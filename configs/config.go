@@ -42,7 +42,7 @@ func LoadConfig() *Config {
 		},
 		Server: Server{
 			Port: getEnv("PORT", "8080"),
-			Mode: getEnv("GIN_MODE", "debug"),
+			Mode: getEnv("GIN_MODE", "release"),
 		},
 		API: API{
 			Version:     getEnv("API_VERSION", "v1"),
