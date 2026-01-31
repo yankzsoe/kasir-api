@@ -4,7 +4,7 @@ import "time"
 
 // CategoryCreateRequest represents the request body for creating a category
 type CategoryCreateRequest struct {
-	Name        string `json:"name" example:"Electronics"`
+	Name        string `json:"name" validate:"required" example:"Electronics"`
 	Description string `json:"description" example:"Electronic items"`
 	IsActive    bool   `json:"is_active" example:"true"`
 }
@@ -14,6 +14,11 @@ type CategoryUpdateRequest struct {
 	Name        string `json:"name" example:"Electronics"`
 	Description string `json:"description" example:"Electronic items"`
 	IsActive    bool   `json:"is_active" example:"true"`
+}
+
+// CategoryUriRequest represents the URI parameter for category ID
+type CategoryUriRequest struct {
+	ID string `uri:"id" validate:"required" example:"1"`
 }
 
 // CategoryResponse represents the response body for category

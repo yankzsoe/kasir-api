@@ -3,21 +3,19 @@ package services
 import (
 	"errors"
 
-	"kasir-api/configs"
 	"kasir-api/models"
-
-	"gorm.io/gorm"
+	"kasir-api/repositories"
 )
 
 // CategoryService handles business logic for categories
 type CategoryService struct {
-	db *gorm.DB
+	repo repositories.ICategoryRepository
 }
 
 // NewCategoryService creates a new category service instance
-func NewCategoryService() *CategoryService {
+func NewCategoryService(repo repositories.ICategoryRepository) *CategoryService {
 	return &CategoryService{
-		db: configs.GetDB(),
+		repo: repo,
 	}
 }
 
@@ -27,78 +25,37 @@ func (s *CategoryService) CreateCategory(category *models.Category) error {
 		return errors.New("category name is required")
 	}
 
-	db := configs.GetDB()
-	result := db.Create(category)
-	return result.Error
+	return s.repo.Create(category)
 }
 
 // GetAllCategories retrieves all categories from the database
 func (s *CategoryService) GetAllCategories() ([]models.Category, error) {
-	var categories []models.Category
-	db := configs.GetDB()
-	result := db.Find(&categories)
-	return categories, result.Error
+	return s.repo.FindAll()
 }
 
 // GetCategoryByID retrieves a single category by ID
 func (s *CategoryService) GetCategoryByID(id string) (*models.Category, error) {
-	var category models.Category
-	db := configs.GetDB()
-	result := db.First(&category, id)
-
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			return nil, errors.New("category not found")
-		}
-		return nil, result.Error
-	}
-
-	return &category, nil
+	return s.repo.FindByID(id)
 }
 
 // UpdateCategory updates an existing category
 func (s *CategoryService) UpdateCategory(id string, updateData *models.Category) (*models.Category, error) {
-	var category models.Category
-	db := configs.GetDB()
-
-	// Find category by ID
-	result := db.First(&category, id)
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			return nil, errors.New("category not found")
-		}
-		return nil, result.Error
-	}
-
 	// Validate required fields
-	if updateData.Name == "" && category.Name == "" {
-		return nil, errors.New("category name is required")
+	if updateData.Name == "" {
+		// Get current category to check if it has a name
+		current, err := s.repo.FindByID(id)
+		if err != nil {
+			return nil, err
+		}
+		if current.Name == "" {
+			return nil, errors.New("category name is required")
+		}
 	}
 
-	// Update category
-	result = db.Model(&category).Updates(updateData)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return &category, nil
+	return s.repo.Update(id, updateData)
 }
 
 // DeleteCategory deletes a category by ID (soft delete)
 func (s *CategoryService) DeleteCategory(id string) error {
-	var category models.Category
-	db := configs.GetDB()
-
-	// Find category by ID
-	result := db.First(&category, id)
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			return errors.New("category not found")
-		}
-		return result.Error
-	}
-
-	// Delete category (soft delete via DeletedAt)
-	result = db.Delete(&category)
-	return result.Error
+	return s.repo.Delete(id)
 }

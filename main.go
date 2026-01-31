@@ -5,9 +5,12 @@ import (
 	"os"
 
 	"kasir-api/configs"
+	"kasir-api/controllers"
 	"kasir-api/docs"
 	"kasir-api/models"
+	"kasir-api/repositories"
 	"kasir-api/routers"
+	"kasir-api/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -45,6 +48,15 @@ func main() {
 	if err := db.AutoMigrate(&models.Category{}); err != nil {
 		log.Fatalf("Failed to migrate models: %v", err)
 	}
+
+	// Initialize repositories
+	repo := repositories.NewRepository(db)
+
+	// Initialize services
+	categoryService := services.NewCategoryService(repo.Category)
+
+	// Set up controllers with services
+	controllers.SetCategoryService(categoryService)
 
 	// Create Gin router
 	router := gin.Default()

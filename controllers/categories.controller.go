@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"kasir-api/common"
 	"kasir-api/dtos"
 	"kasir-api/models"
 	"kasir-api/services"
@@ -10,7 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var categoryService = services.NewCategoryService()
+var categoryService *services.CategoryService
+
+// SetCategoryService initializes the category service with repository
+func SetCategoryService(service *services.CategoryService) {
+	categoryService = service
+}
 
 // CreateCategory godoc
 // @Summary Create a new category
@@ -26,10 +32,10 @@ var categoryService = services.NewCategoryService()
 func CreateCategory(c *gin.Context) {
 	var req dtos.CategoryCreateRequest
 
-	// Bind request body
+	// Bind and validate request body
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		errMsg := common.GenerateErrorMessage(err)
+		common.ThrowExceptionOnValidation(http.StatusBadRequest, errMsg)
 	}
 
 	// Convert DTO to model
@@ -41,8 +47,7 @@ func CreateCategory(c *gin.Context) {
 
 	// Call service to create category
 	if err := categoryService.CreateCategory(&category); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		common.ThrowException(http.StatusInternalServerError, err.Error())
 	}
 
 	// Convert model to response DTO
@@ -73,8 +78,7 @@ func GetAllCategories(c *gin.Context) {
 	// Call service to get all categories
 	categories, err := categoryService.GetAllCategories()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		common.ThrowException(http.StatusInternalServerError, err.Error())
 	}
 
 	// Convert models to response DTOs
@@ -90,11 +94,7 @@ func GetAllCategories(c *gin.Context) {
 		}
 	}
 
-	response := dtos.GetCategoriesSuccessResponse{
-		Message: "Categories retrieved successfully",
-		Data:    categoryResponses,
-		Total:   len(categoryResponses),
-	}
+	response := common.GetListSuccessResponse(categoryResponses)
 
 	c.JSON(http.StatusOK, response)
 }
@@ -110,31 +110,24 @@ func GetAllCategories(c *gin.Context) {
 // @Failure 500 {object} dtos.ErrorResponse
 // @Router /categories/{id} [get]
 func GetCategoryByID(c *gin.Context) {
-	id := c.Param("id")
+	uriReq := dtos.CategoryUriRequest{}
+	if err := c.ShouldBindUri(&uriReq); err != nil {
+		errMsg := common.GenerateErrorMessage(err)
+		common.ThrowExceptionOnValidation(http.StatusBadRequest, errMsg)
+	}
 
 	// Call service to get category by ID
-	category, err := categoryService.GetCategoryByID(id)
+	category, err := categoryService.GetCategoryByID(uriReq.ID)
 	if err != nil {
-		if err.Error() == "category not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		common.ThrowException(http.StatusInternalServerError, err.Error())
 	}
 
-	// Convert model to response DTO
-	response := dtos.GetCategorySuccessResponse{
-		Message: "Category retrieved successfully",
-		Data: dtos.CategoryResponse{
-			ID:          category.ID,
-			Name:        category.Name,
-			Description: category.Description,
-			IsActive:    category.IsActive,
-			CreatedAt:   category.CreatedAt,
-			UpdatedAt:   category.UpdatedAt,
-		},
+	if category.ID == 0 {
+		response := common.NotFoundResponse()
+		c.JSON(http.StatusOK, response)
+		return
 	}
+	response := common.SuccessResponseWithData(category)
 
 	c.JSON(http.StatusOK, response)
 }
@@ -154,12 +147,18 @@ func GetCategoryByID(c *gin.Context) {
 // @Router /categories/{id} [put]
 func UpdateCategory(c *gin.Context) {
 	var req dtos.CategoryUpdateRequest
-	id := c.Param("id")
+	uriReq := dtos.CategoryUriRequest{}
 
-	// Bind request body
+	// Bind and validate URI parameters
+	if err := c.ShouldBindUri(&uriReq); err != nil {
+		errMsg := common.GenerateErrorMessage(err)
+		common.ThrowExceptionOnValidation(http.StatusBadRequest, errMsg)
+	}
+
+	// Bind and validate request body
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		errMsg := common.GenerateErrorMessage(err)
+		common.ThrowExceptionOnValidation(http.StatusBadRequest, errMsg)
 	}
 
 	// Convert DTO to model
@@ -170,14 +169,12 @@ func UpdateCategory(c *gin.Context) {
 	}
 
 	// Call service to update category
-	category, err := categoryService.UpdateCategory(id, &updateData)
+	category, err := categoryService.UpdateCategory(uriReq.ID, &updateData)
 	if err != nil {
 		if err.Error() == "category not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
+			common.ThrowException(http.StatusNotFound, err.Error())
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		common.ThrowException(http.StatusInternalServerError, err.Error())
 	}
 
 	// Convert model to response DTO
@@ -207,16 +204,18 @@ func UpdateCategory(c *gin.Context) {
 // @Failure 500 {object} dtos.ErrorResponse
 // @Router /categories/{id} [delete]
 func DeleteCategory(c *gin.Context) {
-	id := c.Param("id")
+	uriReq := dtos.CategoryUriRequest{}
+	if err := c.ShouldBindUri(&uriReq); err != nil {
+		errMsg := common.GenerateErrorMessage(err)
+		common.ThrowExceptionOnValidation(http.StatusBadRequest, errMsg)
+	}
 
 	// Call service to delete category
-	if err := categoryService.DeleteCategory(id); err != nil {
+	if err := categoryService.DeleteCategory(uriReq.ID); err != nil {
 		if err.Error() == "category not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
+			common.ThrowException(http.StatusNotFound, err.Error())
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		common.ThrowException(http.StatusInternalServerError, err.Error())
 	}
 
 	response := dtos.DeleteCategorySuccessResponse{
