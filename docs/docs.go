@@ -781,8 +781,6 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "A complete Point of Sale (POS) API built with Go, Gin, and GORM",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {
