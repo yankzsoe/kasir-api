@@ -46,12 +46,11 @@ func main() {
 
 	// Auto migrate models
 	db := configs.GetDB()
-	if err := db.AutoMigrate(&models.Category{}); err != nil {
-		log.Fatalf("Failed to migrate models: %v", err)
-	}
 
-	if err := db.AutoMigrate(&models.Produk{}); err != nil {
-		log.Fatalf("Failed to migrate models: %v", err)
+	if os.Getenv("APP_ENV") != "production" {
+		if err := db.AutoMigrate(&models.Category{}, &models.Produk{}); err != nil {
+			log.Fatalf("Failed to migrate models: %v", err)
+		}
 	}
 
 	// Initialize repositories

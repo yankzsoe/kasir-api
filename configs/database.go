@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -30,14 +31,23 @@ func InitDB() {
 		dbpassword := os.Getenv("dbpassword")
 		dbusername := os.Getenv("dbusername")
 		dbport := os.Getenv("dbport")
-		dsn := "host=" + dbhost + " user=" + dbusername + " password=" + dbpassword + " dbname=" + dbname + " port=" + dbport
+		// dsn := "host=" + dbhost + " user=" + dbusername + " password=" + dbpassword + " dbname=" + dbname + " port=" + dbport
+		dsn := fmt.Sprintf(
+			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
+			dbhost,
+			dbusername,
+			dbpassword,
+			dbname,
+			dbport,
+		)
 
 		var db *gorm.DB
 		var err error
 
 		connectingToDb := func() error {
 			db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-				Logger: customLogger,
+				PrepareStmt: false, // fix error karena pooler supabase
+				Logger:      customLogger,
 				NamingStrategy: schema.NamingStrategy{
 					SingularTable: true,
 				},
