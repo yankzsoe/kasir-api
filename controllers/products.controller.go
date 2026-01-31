@@ -41,9 +41,9 @@ func CreateProduct(c *gin.Context) {
 
 	// Convert DTO to model
 	product := models.Produk{
-		Nama:       req.Nama,
-		Harga:      req.Harga,
-		Stok:       req.Stok,
+		Name:       req.Name,
+		Price:      req.Price,
+		Stock:      req.Stock,
 		IsActive:   req.IsActive,
 		CategoryId: req.CategoryId,
 	}
@@ -58,9 +58,9 @@ func CreateProduct(c *gin.Context) {
 		Message: "Product created successfully",
 		Data: dtos.ProductResponse{
 			ID:         product.ID,
-			Nama:       product.Nama,
-			Harga:      product.Harga,
-			Stok:       product.Stok,
+			Name:       product.Name,
+			Price:      product.Price,
+			Stock:      product.Stock,
 			IsActive:   product.IsActive,
 			CategoryId: product.CategoryId,
 			CreatedAt:  product.CreatedAt,
@@ -90,14 +90,15 @@ func GetAllProducts(c *gin.Context) {
 	productResponses := make([]dtos.ProductResponse, len(products))
 	for i, prod := range products {
 		productResponses[i] = dtos.ProductResponse{
-			ID:         prod.ID,
-			Nama:       prod.Nama,
-			Harga:      prod.Harga,
-			Stok:       prod.Stok,
-			IsActive:   prod.IsActive,
-			CategoryId: prod.CategoryId,
-			CreatedAt:  prod.CreatedAt,
-			UpdatedAt:  prod.UpdatedAt,
+			ID:           prod.ID,
+			Name:         prod.Name,
+			CategoryName: prod.Category.Name,
+			Price:        prod.Price,
+			Stock:        prod.Stock,
+			IsActive:     prod.IsActive,
+			CategoryId:   prod.CategoryId,
+			CreatedAt:    prod.CreatedAt,
+			UpdatedAt:    prod.UpdatedAt,
 		}
 	}
 
@@ -138,14 +139,15 @@ func GetProductByID(c *gin.Context) {
 	response := dtos.GetProductSuccessResponse{
 		Message: "Product retrieved successfully",
 		Data: dtos.ProductResponse{
-			ID:         product.ID,
-			Nama:       product.Nama,
-			Harga:      product.Harga,
-			Stok:       product.Stok,
-			IsActive:   product.IsActive,
-			CategoryId: product.CategoryId,
-			CreatedAt:  product.CreatedAt,
-			UpdatedAt:  product.UpdatedAt,
+			ID:           product.ID,
+			Name:         product.Name,
+			CategoryName: product.Category.Name,
+			Price:        product.Price,
+			Stock:        product.Stock,
+			IsActive:     product.IsActive,
+			CategoryId:   product.CategoryId,
+			CreatedAt:    product.CreatedAt,
+			UpdatedAt:    product.UpdatedAt,
 		},
 	}
 
@@ -183,9 +185,9 @@ func UpdateProduct(c *gin.Context) {
 
 	// Convert DTO to model
 	updateData := models.Produk{
-		Nama:       req.Nama,
-		Harga:      req.Harga,
-		Stok:       req.Stok,
+		Name:       req.Name,
+		Price:      req.Price,
+		Stock:      req.Stock,
 		IsActive:   req.IsActive,
 		CategoryId: req.CategoryId,
 	}
@@ -202,11 +204,11 @@ func UpdateProduct(c *gin.Context) {
 	// Convert model to response DTO
 	response := dtos.UpdateProductSuccessResponse{
 		Message: "Product updated successfully",
-		Data: dtos.ProductResponse{
+		Data: dtos.UpdateProductResponse{
 			ID:         product.ID,
-			Nama:       product.Nama,
-			Harga:      product.Harga,
-			Stok:       product.Stok,
+			Name:       product.Name,
+			Price:      product.Price,
+			Stock:      product.Stock,
 			IsActive:   product.IsActive,
 			CategoryId: product.CategoryId,
 			CreatedAt:  product.CreatedAt,

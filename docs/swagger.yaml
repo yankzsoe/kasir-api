@@ -120,43 +120,46 @@ definitions:
       category_id:
         example: 1
         type: integer
-      harga:
-        example: 10000000
-        type: integer
       is_active:
         example: true
         type: boolean
-      nama:
+      name:
         example: Laptop
         type: string
-      stok:
+      price:
+        example: 10000000
+        type: integer
+      stock:
         example: 5
         type: integer
     required:
-    - harga
-    - nama
-    - stok
+    - name
+    - price
+    - stock
     type: object
   dtos.ProductResponse:
     properties:
       category_id:
         example: 1
         type: integer
+      category_name:
+        example: Electronic
+        type: string
       created_at:
         type: string
-      harga:
-        example: 10000000
-        type: integer
       id:
         example: 1
         type: integer
       is_active:
         example: true
         type: boolean
-      nama:
+      name:
         example: Laptop
         type: string
-      stok:
+      price:
+        example: 10000000
+        type: integer
+      stock:
         example: 5
         type: integer
       updated_at:
@@ -167,16 +170,16 @@ definitions:
       category_id:
         example: 1
         type: integer
-      harga:
-        example: 10000000
-        type: integer
       is_active:
         example: true
         type: boolean
-      nama:
+      name:
         example: Laptop
         type: string
-      stok:
+      price:
+        example: 10000000
+        type: integer
+      stock:
         example: 5
         type: integer
     type: object
@@ -188,10 +191,35 @@ definitions:
         example: Category updated successfully
         type: string
     type: object
+  dtos.UpdateProductResponse:
+    properties:
+      category_id:
+        example: 1
+        type: integer
+      created_at:
+        type: string
+      id:
+        example: 1
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      name:
+        example: Laptop
+        type: string
+      price:
+        example: 10000000
+        type: integer
+      stock:
+        example: 5
+        type: integer
+      updated_at:
+        type: string
+    type: object
   dtos.UpdateProductSuccessResponse:
     properties:
       data:
-        $ref: '#/definitions/dtos.ProductResponse'
+        $ref: '#/definitions/dtos.UpdateProductResponse'
       message:
         example: Product updated successfully
         type: string

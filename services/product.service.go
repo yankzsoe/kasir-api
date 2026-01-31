@@ -21,15 +21,15 @@ func NewProductService(repo repositories.IProductRepository) *ProductService {
 
 // CreateProduct creates a new product in the database
 func (s *ProductService) CreateProduct(product *models.Produk) error {
-	if product.Nama == "" {
+	if product.Name == "" {
 		return errors.New("product name is required")
 	}
 
-	if product.Harga <= 0 {
+	if product.Price <= 0 {
 		return errors.New("product price must be greater than 0")
 	}
 
-	if product.Stok < 0 {
+	if product.Stock < 0 {
 		return errors.New("product stock cannot be negative")
 	}
 
@@ -49,22 +49,22 @@ func (s *ProductService) GetProductByID(id string) (*models.Produk, error) {
 // UpdateProduct updates an existing product
 func (s *ProductService) UpdateProduct(id string, updateData *models.Produk) (*models.Produk, error) {
 	// Validate required fields
-	if updateData.Nama == "" {
+	if updateData.Name == "" {
 		// Get current product to check if it has a name
 		current, err := s.repo.FindByID(id)
 		if err != nil {
 			return nil, err
 		}
-		if current.Nama == "" {
+		if current.Name == "" {
 			return nil, errors.New("product name is required")
 		}
 	}
 
-	if updateData.Harga < 0 {
+	if updateData.Price < 0 {
 		return nil, errors.New("product price cannot be negative")
 	}
 
-	if updateData.Stok < 0 {
+	if updateData.Stock < 0 {
 		return nil, errors.New("product stock cannot be negative")
 	}
 

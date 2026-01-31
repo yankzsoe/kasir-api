@@ -609,28 +609,28 @@ const docTemplate = `{
         "dtos.ProductCreateRequest": {
             "type": "object",
             "required": [
-                "harga",
-                "nama",
-                "stok"
+                "name",
+                "price",
+                "stock"
             ],
             "properties": {
                 "category_id": {
                     "type": "integer",
                     "example": 1
                 },
-                "harga": {
-                    "type": "integer",
-                    "example": 10000000
-                },
                 "is_active": {
                     "type": "boolean",
                     "example": true
                 },
-                "nama": {
+                "name": {
                     "type": "string",
                     "example": "Laptop"
                 },
-                "stok": {
+                "price": {
+                    "type": "integer",
+                    "example": 10000000
+                },
+                "stock": {
                     "type": "integer",
                     "example": 5
                 }
@@ -643,12 +643,12 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 1
                 },
+                "category_name": {
+                    "type": "string",
+                    "example": "Electronic"
+                },
                 "created_at": {
                     "type": "string"
-                },
-                "harga": {
-                    "type": "integer",
-                    "example": 10000000
                 },
                 "id": {
                     "type": "integer",
@@ -658,11 +658,15 @@ const docTemplate = `{
                     "type": "boolean",
                     "example": true
                 },
-                "nama": {
+                "name": {
                     "type": "string",
                     "example": "Laptop"
                 },
-                "stok": {
+                "price": {
+                    "type": "integer",
+                    "example": 10000000
+                },
+                "stock": {
                     "type": "integer",
                     "example": 5
                 },
@@ -678,19 +682,19 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 1
                 },
-                "harga": {
-                    "type": "integer",
-                    "example": 10000000
-                },
                 "is_active": {
                     "type": "boolean",
                     "example": true
                 },
-                "nama": {
+                "name": {
                     "type": "string",
                     "example": "Laptop"
                 },
-                "stok": {
+                "price": {
+                    "type": "integer",
+                    "example": 10000000
+                },
+                "stock": {
                     "type": "integer",
                     "example": 5
                 }
@@ -708,11 +712,46 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.UpdateProductResponse": {
+            "type": "object",
+            "properties": {
+                "category_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Laptop"
+                },
+                "price": {
+                    "type": "integer",
+                    "example": 10000000
+                },
+                "stock": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "dtos.UpdateProductSuccessResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/dtos.ProductResponse"
+                    "$ref": "#/definitions/dtos.UpdateProductResponse"
                 },
                 "message": {
                     "type": "string",
@@ -742,6 +781,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "A complete Point of Sale (POS) API built with Go, Gin, and GORM",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {

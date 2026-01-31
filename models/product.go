@@ -12,9 +12,9 @@ func (Produk) TableName() string {
 
 type Produk struct {
 	ID         int            `json:"id"`
-	Nama       string         `json:"nama"`
-	Harga      int            `json:"harga"`
-	Stok       int            `json:"stok"`
+	Name       string         `json:"name"`
+	Price      int            `json:"price"`
+	Stock      int            `json:"stock"`
 	IsActive   bool           `gorm:"default:true" json:"is_active"`
 	CategoryId *int           `json:"category_id"`
 	CreatedAt  time.Time      `json:"created_at"`

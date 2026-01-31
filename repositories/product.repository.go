@@ -38,14 +38,20 @@ func (r *ProductRepository) Create(product *models.Produk) error {
 // FindByID retrieves a single product by ID
 func (r *ProductRepository) FindByID(id string) (*models.Produk, error) {
 	var product models.Produk
-	result := r.db.Find(&product, id)
+	result := r.db.
+		Preload("Category").
+		Find(&product, id)
 	return &product, result.Error
 }
 
 // FindAll retrieves all products from the database
 func (r *ProductRepository) FindAll() ([]models.Produk, error) {
 	var products []models.Produk
-	result := r.db.Find(&products)
+
+	result := r.db.
+		Preload("Category").
+		Find(&products)
+
 	return products, result.Error
 }
 
