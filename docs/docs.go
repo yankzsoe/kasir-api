@@ -299,6 +299,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/products/search": {
+            "get": {
+                "description": "Search products by name or category name",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Search products",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search query for product name or category name",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.GetProductsSuccessResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/products/{id}": {
             "get": {
                 "description": "Retrieve a specific product by its ID",
@@ -781,6 +815,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "A complete Point of Sale (POS) API built with Go, Gin, and GORM",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	// LeftDelim:        "{{",
+	// RightDelim:       "}}",
 }
 
 func init() {

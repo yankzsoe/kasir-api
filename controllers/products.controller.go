@@ -71,6 +71,45 @@ func CreateProduct(c *gin.Context) {
 	c.JSON(http.StatusCreated, response)
 }
 
+// SearchProducts godoc
+// @Summary Search products
+// @Description Search products by name or category name
+// @Tags Products
+// @Produce json
+// @Param search query string false "Search query for product name or category name"
+// @Success 200 {object} dtos.GetProductsSuccessResponse
+// @Failure 500 {object} dtos.ErrorResponse
+// @Router /products/search [get]
+func SearchProducts(c *gin.Context) {
+	searchQuery := c.DefaultQuery("search", "")
+
+	// Call service to search products
+	products, err := productService.SearchProducts(searchQuery)
+	if err != nil {
+		common.ThrowException(http.StatusInternalServerError, err.Error())
+	}
+
+	// Convert models to response DTOs
+	productResponses := make([]dtos.ProductResponse, len(products))
+	for i, prod := range products {
+		productResponses[i] = dtos.ProductResponse{
+			ID:           prod.ID,
+			Name:         prod.Name,
+			CategoryName: prod.Category.Name,
+			Price:        prod.Price,
+			Stock:        prod.Stock,
+			IsActive:     prod.IsActive,
+			CategoryId:   prod.CategoryId,
+			CreatedAt:    prod.CreatedAt,
+			UpdatedAt:    prod.UpdatedAt,
+		}
+	}
+
+	response := common.GetListSuccessResponse(productResponses)
+
+	c.JSON(http.StatusOK, response)
+}
+
 // GetAllProducts godoc
 // @Summary Get all products
 // @Description Retrieve a list of all products

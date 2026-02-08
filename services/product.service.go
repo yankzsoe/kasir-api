@@ -41,6 +41,14 @@ func (s *ProductService) GetAllProducts() ([]models.Produk, error) {
 	return s.repo.FindAll()
 }
 
+// SearchProducts searches for products by name or category name
+func (s *ProductService) SearchProducts(query string) ([]models.Produk, error) {
+	if query == "" {
+		return s.repo.FindAll()
+	}
+	return s.repo.Search(query)
+}
+
 // GetProductByID retrieves a single product by ID
 func (s *ProductService) GetProductByID(id string) (*models.Produk, error) {
 	return s.repo.FindByID(id)

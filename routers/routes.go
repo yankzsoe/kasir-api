@@ -126,6 +126,17 @@ func setupProductRoutes(router *gin.Engine) {
 		// @Router /products [get]
 		productGroup.GET("", controllers.GetAllProducts)
 
+		// Search products
+		// @Summary Search products
+		// @Description Search products by name or category name
+		// @Tags Products
+		// @Produce json
+		// @Param search query string false "Search query for product name or category name"
+		// @Success 200 {object} map[string]interface{}
+		// @Failure 500 {object} map[string]string
+		// @Router /products/search [get]
+		productGroup.GET("/search", controllers.SearchProducts)
+
 		// Get product by ID
 		// @Summary Get a product by ID
 		// @Description Retrieve a specific product by its ID

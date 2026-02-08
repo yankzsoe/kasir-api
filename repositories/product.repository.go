@@ -13,6 +13,7 @@ type IProductRepository interface {
 	Create(product *models.Produk) error
 	FindByID(id string) (*models.Produk, error)
 	FindAll() ([]models.Produk, error)
+	Search(query string) ([]models.Produk, error)
 	Update(id string, updateData *models.Produk) (*models.Produk, error)
 	Delete(id string) error
 }
@@ -50,6 +51,19 @@ func (r *ProductRepository) FindAll() ([]models.Produk, error) {
 
 	result := r.db.
 		Preload("Category").
+		Find(&products)
+
+	return products, result.Error
+}
+
+// Search searches for products by name or category name
+func (r *ProductRepository) Search(query string) ([]models.Produk, error) {
+	var products []models.Produk
+
+	result := r.db.
+		Preload("Category").
+		Where("products.name ILIKE ? OR categories.name ILIKE ?", "%"+query+"%", "%"+query+"%").
+		Joins("LEFT JOIN categories ON products.category_id = categories.id").
 		Find(&products)
 
 	return products, result.Error
