@@ -33,7 +33,7 @@ func InitDB() {
 		dbport := os.Getenv("dbport")
 		// dsn := "host=" + dbhost + " user=" + dbusername + " password=" + dbpassword + " dbname=" + dbname + " port=" + dbport
 		dsn := fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
+			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require default_query_exec_mode=simple_protocol",
 			dbhost,
 			dbusername,
 			dbpassword,
