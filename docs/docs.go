@@ -469,6 +469,52 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/transactions/checkout": {
+            "post": {
+                "description": "Process a checkout transaction with items and calculate total amount",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Complete transaction checkout",
+                "parameters": [
+                    {
+                        "description": "Items to checkout",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CheckoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CheckoutSuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -533,6 +579,98 @@ const docTemplate = `{
                 "name": {
                     "type": "string",
                     "example": "Electronics"
+                }
+            }
+        },
+        "dtos.CheckoutItem": {
+            "type": "object",
+            "required": [
+                "product_id",
+                "quantity"
+            ],
+            "properties": {
+                "product_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 2
+                }
+            }
+        },
+        "dtos.CheckoutItemResponse": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "integer",
+                    "example": 10000000
+                },
+                "product_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "product_name": {
+                    "type": "string",
+                    "example": "Laptop"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "subtotal": {
+                    "type": "integer",
+                    "example": 20000000
+                }
+            }
+        },
+        "dtos.CheckoutRequest": {
+            "type": "object",
+            "required": [
+                "items"
+            ],
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/dtos.CheckoutItem"
+                    }
+                }
+            }
+        },
+        "dtos.CheckoutResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dtos.CheckoutItemResponse"
+                    }
+                },
+                "total_amount": {
+                    "type": "integer",
+                    "example": 20000000
+                },
+                "transaction_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "dtos.CheckoutSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dtos.CheckoutResponse"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Checkout completed successfully"
                 }
             }
         },

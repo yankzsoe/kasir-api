@@ -48,7 +48,7 @@ func main() {
 	db := configs.GetDB()
 
 	if os.Getenv("APP_ENV") != "production" {
-		if err := db.AutoMigrate(&models.Category{}, &models.Produk{}); err != nil {
+		if err := db.AutoMigrate(&models.Category{}, &models.Produk{}, &models.Transactions{}, &models.TransactionDetails{}); err != nil {
 			log.Fatalf("Failed to migrate models: %v", err)
 		}
 	}
@@ -59,10 +59,12 @@ func main() {
 	// Initialize services
 	categoryService := services.NewCategoryService(repo.Category)
 	productService := services.NewProductService(repo.Product)
+	transactionService := services.NewTransactionService(repo.Transaction, repo.Product)
 
 	// Set up controllers with services
 	controllers.SetCategoryService(categoryService)
 	controllers.SetProductService(productService)
+	controllers.SetTransactionService(transactionService)
 
 	// Create Gin router
 	router := gin.Default()

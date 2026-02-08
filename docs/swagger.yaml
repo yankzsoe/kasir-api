@@ -45,6 +45,70 @@ definitions:
         example: Electronics
         type: string
     type: object
+  dtos.CheckoutItem:
+    properties:
+      product_id:
+        example: 1
+        type: integer
+      quantity:
+        example: 2
+        minimum: 1
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  dtos.CheckoutItemResponse:
+    properties:
+      price:
+        example: 10000000
+        type: integer
+      product_id:
+        example: 1
+        type: integer
+      product_name:
+        example: Laptop
+        type: string
+      quantity:
+        example: 2
+        type: integer
+      subtotal:
+        example: 20000000
+        type: integer
+    type: object
+  dtos.CheckoutRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/dtos.CheckoutItem'
+        minItems: 1
+        type: array
+    required:
+    - items
+    type: object
+  dtos.CheckoutResponse:
+    properties:
+      created_at:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/dtos.CheckoutItemResponse'
+        type: array
+      total_amount:
+        example: 20000000
+        type: integer
+      transaction_id:
+        example: 1
+        type: integer
+    type: object
+  dtos.CheckoutSuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.CheckoutResponse'
+      message:
+        example: Checkout completed successfully
+        type: string
+    type: object
   dtos.CreateCategorySuccessResponse:
     properties:
       data:
@@ -538,6 +602,36 @@ paths:
       summary: Search products
       tags:
       - Products
+  /transactions/checkout:
+    post:
+      consumes:
+      - application/json
+      description: Process a checkout transaction with items and calculate total amount
+      parameters:
+      - description: Items to checkout
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CheckoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.CheckoutSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/kasir-api_dtos.ErrorResponse'
+      summary: Complete transaction checkout
+      tags:
+      - Transactions
 schemes:
 - http
 swagger: "2.0"

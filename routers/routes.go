@@ -29,6 +29,9 @@ func SetupRoutes(router *gin.Engine) {
 
 	// Product routes
 	setupProductRoutes(router)
+
+	// Transaction routes
+	setupTransactionRoutes(router)
 }
 
 // setupCategoryRoutes configures category-related routes
@@ -175,5 +178,24 @@ func setupProductRoutes(router *gin.Engine) {
 		// @Failure 500 {object} map[string]string
 		// @Router /products/{id} [delete]
 		productGroup.DELETE("/:id", controllers.DeleteProduct)
+	}
+}
+
+// setupTransactionRoutes configures transaction-related routes
+func setupTransactionRoutes(router *gin.Engine) {
+	transactionGroup := router.Group("/api/v1/transactions")
+	{
+		// Checkout
+		// @Summary Complete transaction checkout
+		// @Description Process a checkout transaction with items and calculate total amount
+		// @Tags Transactions
+		// @Accept json
+		// @Produce json
+		// @Param request body dtos.CheckoutRequest true "Items to checkout"
+		// @Success 200 {object} map[string]interface{}
+		// @Failure 400 {object} map[string]string
+		// @Failure 500 {object} map[string]string
+		// @Router /transactions/checkout [post]
+		transactionGroup.POST("/checkout", controllers.Checkout)
 	}
 }
