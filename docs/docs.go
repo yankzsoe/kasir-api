@@ -515,6 +515,96 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/transactions/report": {
+            "get": {
+                "description": "Generate a selling report with total revenue, transaction count, and best-selling products",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get selling report by date range",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Start date (format: YYYY-MM-DD, e.g. 2026-01-01)",
+                        "name": "start_date",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End date (format: YYYY-MM-DD, e.g. 2026-02-01)",
+                        "name": "end_date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/search": {
+            "get": {
+                "description": "Search transactions. Default is today. Format: YYYY/MM/DD or YYYY/MM/DD - YYYY/MM/DD",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Search transactions by date or date range",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Date or date range (e.g. 2025/12/01 - 2026/02/05)",
+                        "name": "date",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/kasir-api_dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

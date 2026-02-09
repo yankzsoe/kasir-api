@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"strconv"
+	"time"
 
 	"kasir-api/dtos"
 	"kasir-api/models"
@@ -89,4 +90,74 @@ func (s *TransactionService) ProcessCheckout(items []dtos.CheckoutItem) (*models
 
 	// Return the completed transaction with all its details
 	return s.transactionRepo.GetTransactionByID(transaction.ID)
+}
+
+// SearchTransactionsByDateRange returns transactions within start and end time
+func (s *TransactionService) SearchTransactionsByDateRange(start, end time.Time) ([]models.Transactions, error) {
+	return s.transactionRepo.GetTransactionsByDateRange(start, end)
+}
+
+// GenerateReport generates a selling report for a date range
+func (s *TransactionService) GenerateReport(start, end time.Time) (*dtos.TransactionReportResponse, error) {
+	// Get transactions for revenue and count calculation
+	transactions, err := s.transactionRepo.GetTransactionsByDateRange(start, end)
+	if err != nil {
+		return nil, err
+	}
+
+	// Calculate total revenue and count
+	totalRevenue := 0
+	for _, t := range transactions {
+		totalRevenue += t.TotalAmount
+	}
+
+	// Get best-selling products
+	bestSellingData, err := s.transactionRepo.GetReportByDateRange(start, end)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert to BestSellingProduct DTO, limit to top 3
+	bestSellingProducts := make([]dtos.BestSellingProduct, 0)
+	for i, item := range bestSellingData {
+		if i >= 3 {
+			break
+		}
+
+		// Handle name safely
+		var productName string
+		if name, ok := item["name"].(string); ok {
+			productName = name
+		}
+
+		// Handle qty_sold which might be int64 or float64 depending on database driver
+		var qtySold int
+		switch v := item["qty_sold"].(type) {
+		case int64:
+			qtySold = int(v)
+		case float64:
+			qtySold = int(v)
+		case int:
+			qtySold = v
+		default:
+			qtySold = 0
+		}
+
+		bestSellingProducts = append(bestSellingProducts, dtos.BestSellingProduct{
+			Name:    productName,
+			QtySold: qtySold,
+		})
+	}
+
+	// Format report date as date range
+	reportDateStr := start.Format("2006-01-02") + " to " + end.Format("2006-01-02")
+
+	report := &dtos.TransactionReportResponse{
+		ReportDate:          reportDateStr,
+		TotalRevenue:        totalRevenue,
+		TotalTransactions:   len(transactions),
+		BestSellingProducts: bestSellingProducts,
+	}
+
+	return report, nil
 }

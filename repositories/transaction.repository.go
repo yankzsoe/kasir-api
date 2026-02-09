@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"time"
 
 	"kasir-api/models"
 
@@ -14,6 +15,8 @@ type ITransactionRepository interface {
 	GetTransactionByID(id int) (*models.Transactions, error)
 	AddItemToTransaction(transactionID, productID, quantity int, productName string, subtotal int) error
 	UpdateTransactionTotal(transactionID int, totalAmount int) error
+	GetTransactionsByDateRange(start, end time.Time) ([]models.Transactions, error)
+	GetReportByDateRange(start, end time.Time) ([]map[string]interface{}, error)
 }
 
 // TransactionRepository handles database operations for transactions
@@ -77,4 +80,41 @@ func (r *TransactionRepository) UpdateTransactionTotal(transactionID int, totalA
 		Update("total_amount", totalAmount)
 
 	return result.Error
+}
+
+// GetTransactionsByDateRange retrieves transactions within provided date range (inclusive)
+func (r *TransactionRepository) GetTransactionsByDateRange(start, end time.Time) ([]models.Transactions, error) {
+	var transactions []models.Transactions
+
+	result := r.db.
+		Preload("Details").
+		Where("created_at BETWEEN ? AND ?", start, end).
+		Order("created_at desc").
+		Find(&transactions)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return transactions, nil
+}
+
+// GetReportByDateRange retrieves best-selling products within provided date range
+func (r *TransactionRepository) GetReportByDateRange(start, end time.Time) ([]map[string]interface{}, error) {
+	var result []map[string]interface{}
+
+	// Query to get best-selling products with their total quantities sold
+	queryResult := r.db.
+		Table("transaction_details").
+		Select("product_name as name, SUM(quantity) as qty_sold").
+		Where("created_at BETWEEN ? AND ?", start, end).
+		Group("product_name").
+		Order("qty_sold DESC").
+		Find(&result)
+
+	if queryResult.Error != nil {
+		return nil, queryResult.Error
+	}
+
+	return result, nil
 }

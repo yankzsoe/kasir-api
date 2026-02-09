@@ -197,5 +197,9 @@ func setupTransactionRoutes(router *gin.Engine) {
 		// @Failure 500 {object} map[string]string
 		// @Router /transactions/checkout [post]
 		transactionGroup.POST("/checkout", controllers.Checkout)
+		// Search transactions by date or range
+		transactionGroup.GET("/search", controllers.SearchTransactions)
+		// Get transaction report
+		transactionGroup.GET("/report", controllers.GetTransactionReport)
 	}
 }
